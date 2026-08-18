@@ -118,7 +118,7 @@ python -m pip install fastapi uvicorn sqlalchemy python-dotenv
 Create a `.env` file in the project root:
 
 ```env
-DATABASE_URL=sqlite:///./app.db
+DATABASE_URL=sqlite:///./example.db
 ```
 
 A `.env.example` file is included as a template:
