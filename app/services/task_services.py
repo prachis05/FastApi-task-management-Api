@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
-from app.database import getDb
+
 from app import models
-from app.schemas import Request ,TaskUpdate
+from app.schemas import Request, TaskUpdate
+
 
 def createTask (db : Session,item : Request):
     task = models.Task ( 
