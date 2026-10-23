@@ -51,3 +51,42 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t task-management-api:${{ github.sha }} .
+
+  sonarqube:
+    name: SonarQube Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies for analysis
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install pytest httpx coverage
+
+      - name: Run tests and generate coverage
+        env:
+          DATABASE_URL: sqlite:///./ci.db
+        run: |
+          coverage run --source=app -m pytest
+          coverage xml
+
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v8.3.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
